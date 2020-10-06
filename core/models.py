@@ -5,7 +5,6 @@ from django.db.models import Sum
 from django.shortcuts import reverse
 from django_countries.fields import CountryField
 
-
 CATEGORY_CHOICES = (
     ('S', 'Shirt'),
     ('SW', 'Sport wear'),
@@ -25,6 +24,7 @@ ADDRESS_CHOICES = (
 
 
 class UserProfile(models.Model):
+
     user = models.OneToOneField(
         settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     stripe_customer_id = models.CharField(max_length=50, blank=True, null=True)
@@ -35,10 +35,12 @@ class UserProfile(models.Model):
 
 
 class Item(models.Model):
+    # Item 继承了 Model类，可以操作数据库
     title = models.CharField(max_length=100)
     price = models.FloatField()
     discount_price = models.FloatField(blank=True, null=True)
-    category = models.CharField(choices=CATEGORY_CHOICES, max_length=2)
+    category = models.CharField(
+        choices=CATEGORY_CHOICES, max_length=2)  # 字符长度为2
     label = models.CharField(choices=LABEL_CHOICES, max_length=1)
     slug = models.SlugField()
     description = models.TextField()

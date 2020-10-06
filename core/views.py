@@ -1,7 +1,8 @@
 import random
 import string
-
+import allauth
 import stripe
+import django-allauth
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
@@ -11,10 +12,8 @@ from django.shortcuts import redirect
 from django.shortcuts import render, get_object_or_404
 from django.utils import timezone
 from django.views.generic import ListView, DetailView, View
-
 from .forms import CheckoutForm, CouponForm, RefundForm, PaymentForm
 from .models import Item, OrderItem, Order, Address, Payment, Coupon, Refund, UserProfile
-
 stripe.api_key = settings.STRIPE_SECRET_KEY
 
 
@@ -213,7 +212,7 @@ class PaymentView(View):
             context = {
                 'order': order,
                 'DISPLAY_COUPON_FORM': False,
-                'STRIPE_PUBLIC_KEY' : settings.STRIPE_PUBLIC_KEY
+                'STRIPE_PUBLIC_KEY': settings.STRIPE_PUBLIC_KEY
             }
             userprofile = self.request.user.userprofile
             if userprofile.one_click_purchasing:
@@ -369,6 +368,9 @@ class ItemDetailView(DetailView):
     template_name = "product.html"
 
 
+# Decorator for views that checks that the
+# user is logged in, redirecting to the log-in page
+# if necessary
 @login_required
 def add_to_cart(request, slug):
     item = get_object_or_404(Item, slug=slug)
